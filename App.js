@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, State,} from 'react-native';
-import { Container, Header, Left, Body, Right, Button, Icon, Title, Card, Content, Text, CardItem, Input, Item } from 'native-base';
+import { StyleSheet, State, ImageBackground,} from 'react-native';
+import { Col, Row, Grid } from 'react-native-easy-grid';
+import { Container, Header, Left, Body, Right, Button, Icon, Title, Card, Content, Text, CardItem, Input, Item, View } from 'native-base';
 
 const Styles = StyleSheet.create({
   input : {
@@ -19,7 +20,19 @@ const Styles = StyleSheet.create({
  },
   text : {
     marginLeft : 20,
-  }
+  },
+
+  btn_edit : {
+   marginLeft: 5,
+   backgroundColor: 'blue',
+    
+  },
+
+  button_b : {
+    flexDirection : 'row',
+    marginLeft: 180,
+    
+  },
 });
 
 export default class App extends Component {
@@ -28,9 +41,10 @@ export default class App extends Component {
   this.state = {
       userInput : '',
       todolist : [],
-      todoList : [],
-     
-
+      d : [],
+      b : 'Submit',
+      id : ''
+      
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -41,33 +55,67 @@ export default class App extends Component {
   }
 
   handleSubmit = () => {
+
     const todo = this.state.userInput
     const todos = this.state.todolist
     this.setState({
-      todolist : todos.concat(todo),
-      userInput : ''
-    })
+        todolist : todos.concat(todo),
+        userInput : ''
+      })
   }
 
-  handleRemove = d => {
-    let data = this.state.todolist.splice(d, 1);
-    console.log(d);
+  handleRemove = (d) => {
+     this.state.todolist.splice(d,1);
     this.setState({
-      todolist : data
+      todolist : this.state.todolist,
+    });
+   
+  }
+
+
+  handleEdit = (e) => {
+    let d = this.state.todolist;
+    let value = d[e];
+    this.setState({
+      userInput : value,
+      b : 'Edit',
+      id : e,
+      
     })
   }
 
- 
+  handleSubmitEdit = (f) => {
+    
+    const todo = this.state.userInput;
+    const b = this.state.todolist.splice(f,1,todo);
+    console.log(b);
+    this.setState({
+      todolist = todos.concat(todo),
+      userInput = ''
+    })  
+  }
+
+
   render() {
-    const items = this.state.todolist.map(function(item,index){
+    const items = this.state.todolist.map((item,index) =>{
       return  <Card>
       <CardItem>
-      
-
+    
         <Text style= {Styles.text}>{item}</Text>
-        <Right>
-           <Button onClick = { item => { this.handleRemove({item})} } ><Text>Hapus</Text></Button> 
-        </Right>
+        
+          <View style={Styles.button_b}>
+          
+            <Button style={Styles.btn_remove} icon danger rounded onPress={()=> this.handleRemove(index)}>
+            <Icon name='trash'  />
+            </Button>
+           
+           
+            <Button style={Styles.btn_edit} icon primary rounded onPress={()=> this.handleEdit(index)}>
+            <Icon name='home'  />
+          </Button>
+       
+          </View>
+      
        </CardItem>
      </Card>
     });
@@ -91,8 +139,9 @@ export default class App extends Component {
           </Item>  
           </Left>
         <Right style = {Styles.input}>
-        <Button onPress = {this.handleSubmit} rounded>
-            <Text >Submit</Text>
+        <Button onPress = {this.state.b == 'Submit' ? this.handleSubmit : this.handleSubmitEdit(this.state.id) }
+           rounded>
+            <Text >{this.state.b}</Text>
           </Button>
           </Right>
         </Item>
