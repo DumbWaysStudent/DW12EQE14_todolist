@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, State, ImageBackground,} from 'react-native';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { Container, Header, Left, Body, Right, Button, Icon, Title, Card, Content, Text, CardItem, Input, Item, View } from 'native-base';
+import { Container, Header, Left, Body, Right, Button, Icon, Title, Card, Content, Text, CardItem, Input, Item, View, CheckBox } from 'native-base';
 
 const Styles = StyleSheet.create({
   input : {
@@ -30,7 +30,7 @@ const Styles = StyleSheet.create({
 
   button_b : {
     flexDirection : 'row',
-    marginLeft: 180,
+    marginLeft: 100,
     
   },
 });
@@ -42,8 +42,9 @@ export default class App extends Component {
       userInput : '',
       todolist : [],
       d : [],
-      b : 'Submit',
-      id : ''
+      buttonSubmit : 'Submit',
+      id : '',
+      Checkbox : 'false'
       
     };
     this.handleChange = this.handleChange.bind(this);
@@ -72,35 +73,46 @@ export default class App extends Component {
    
   }
 
-
   handleEdit = (e) => {
     let d = this.state.todolist;
-    let value = d[e];
     this.setState({
-      userInput : value,
-      b : 'Edit',
+      // userInput : value,
+      buttonSubmit : 'Edit',
       id : e,
+      inputUser : d[e]
       
     })
   }
 
-  handleSubmitEdit = (f) => {
+  handleSubmitEdit = () => {
     
-    const todo = this.state.userInput;
-    const b = this.state.todolist.splice(f,1,todo);
-    console.log(b);
-    this.setState({
-      todolist = todos.concat(todo),
-      userInput = ''
+    
+    const edit = this.state.todolist.splice(this.state.id,1,this.state.userInput);
+    console.log(edit);
+     this.setState({
+      todolist : this.state.todolist,
+      userInput : this.state.d[this.state.id],
+      buttonSubmit : 'Submit',
     })  
   }
 
+  checklist = (index) => {
 
+    this.setState({
+      Checkbox : 'true',
+    })
+  }
+
+  chekout = (index) => {
+    this.setState({
+      Checkbox : 'false',
+    })
+  }
   render() {
     const items = this.state.todolist.map((item,index) =>{
       return  <Card>
       <CardItem>
-    
+      <CheckBox checked={this.state.Chekbox} color="green"/>
         <Text style= {Styles.text}>{item}</Text>
         
           <View style={Styles.button_b}>
@@ -111,7 +123,7 @@ export default class App extends Component {
            
            
             <Button style={Styles.btn_edit} icon primary rounded onPress={()=> this.handleEdit(index)}>
-            <Icon name='home'  />
+            <Icon name='pencil'  />
           </Button>
        
           </View>
@@ -139,9 +151,9 @@ export default class App extends Component {
           </Item>  
           </Left>
         <Right style = {Styles.input}>
-        <Button onPress = {this.state.b == 'Submit' ? this.handleSubmit : this.handleSubmitEdit(this.state.id) }
+        <Button onPress = {this.state.buttonSubmit == 'Submit' ? this.handleSubmit : this.handleSubmitEdit }
            rounded>
-            <Text >{this.state.b}</Text>
+            <Text >{this.state.buttonSubmit}</Text>
           </Button>
           </Right>
         </Item>
